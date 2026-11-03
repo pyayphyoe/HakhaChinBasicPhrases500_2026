@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hakha Chin Phrasebook</title>
+  
+  <!-- デザイン用のツール（Tailwind CSS）とアイコンを読み込みます -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <style>
+    /* 再生中のアニメーションバー */
+    @keyframes progress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    .animate-progress {
+      animation: progress 2s linear forwards;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 pb-24">
+
+  <!-- ========================================================== -->
+  <!-- 📝 STEP 1: ここにエクセルからコピーして貼り付けます！ -->
+  <!-- ========================================================== -->
+  <script>
+    // エクセルの列の順番は必ず以下のようにしてください。
+    // [1列目:チン語] [2列目:音素] [3列目:日本語] [4列目:メモ] [5列目:音声ファイル名]
+    // ※音素やメモがない場合は、エクセル上で空欄のままで大丈夫です。
+    //
+    // ↓↓ 以下のバッククオート( ` )の間にペーストしてください ↓↓
+    
+const EXCEL_DATA = `
+Zing ṭha.	ziing0 trhaa2	おはようございます。	名詞 zing（朝）に状態動詞 ṭha（良い・語幹I）を直接続けた朝の挨拶表現です（英語の Good morning に相当）。	2021HakhaHolhBasic500_001.wav
+Chun ṭha.	chun1 trhaa3	こんにちは。	名詞 chun（昼・日中）に ṭha（良い）を続けた昼間の挨拶表現です。	2021HakhaHolhBasic500_002.wav
+Zanlei ṭha.	zan3ley0 trhaa2	こんばんは。	名詞 zanlei（夕方・晩；zan「夜」＋lei「側・頃」）に ṭha（良い）を続けた夕方や夜の挨拶表現です。	2021HakhaHolhBasic500_003.wav
+Mang ṭha.	mang0 trhaa2	おやすみなさい。	名詞 mang（夢）に ṭha（良い）を続けた就寝時の挨拶表現です。直訳は「良い夢を」です。	2021HakhaHolhBasic500_004.wav
+Na dam maw?	na1 dam3 moo2	お元気ですか。（初対面のあいさつにも用いる）	2人称単数主格の na-（あなたは）＋状態動詞 dam（元気である・健康である）＋疑問終助詞 maw（〜ですか）からなる最も基本的な挨拶・安否確認の表現です。	2021HakhaHolhBasic500_005.wav
+Kan i ton cu ka lawm.	kan0 qi0 ton0 chuu1 kaa0 loom2.	お会いできてうれしいです。	従属節 kan i ton cu（私たちがお互いに会えたことは；i- は相互接頭辞、ton は動詞 ton/tonh「会う」の語幹II）を主題（cu）とし、主節 ka lawm（私は嬉しい・感謝する）で結ぶ構文です。	2021HakhaHolhBasic500_006.wav
+Kei zong ka lawm ve.	key2 zong3 kaa0 loom2 vee1	こちらこそうれしいです。	独立代名詞 kei（私）に zong（〜も）を添え、述語にも同調を表す小詞 ve（〜もまた）を伴わせて「私の方こそ嬉しいです」と応じる表現です。	2021HakhaHolhBasic500_007.wav
+Zei dah na lawh?	zey0 daq0 na1 loq1	お元気ですか。（調子はどうですか）	疑問詞 zei（何）＋疑問焦点標識 dah に、na lawh（あなたは〜のようである）を続けた疑問文です。直訳は「あなたは何のようですか（どんな様子ですか）？」で、親しい間柄の挨拶に使われます。	2021HakhaHolhBasic500_008.wav
+Ka dam ko, ka lawm, nang tah zeitin?	ka1 dam3 kow0, kaa0 loom2, nang2 taq1 zey3tin0	おかげさまで元気です。あなたはいかがですか。	ka dam ko（元気です；ko は確信・肯定の小詞）と ka lawm（ありがとう）を並べ、後半の nang tah zeitin?（ところであなたはどうですか？；tah は対比の問いかけ助詞）で相手に聞き返す定型表現です。	2021HakhaHolhBasic500_009.wav
+Ka dam ko, ka lawm.	ka1 dam3 kow0, kaa0 loom2.	元気です。ありがとうございます。	ka dam ko（私は元気です）と ka lawm（感謝します／ありがとうございます）を並べた基本的な返答です。	2021HakhaHolhBasic500_010.wav
+Na chungkhar an dam maw?	na0 chung0khaar2 qan3 dam0 moo2	ご家族はお元気ですか。	na chungkhar（あなたのご家族）を主語とし、複数主格の an-（彼らが）＋dam（元気である）＋maw（疑問）で尋ねる文です。集合名詞の「家族」には3人称複数（an-）で一致します。	2021HakhaHolhBasic500_011.wav
+Ka chungkhar an zapi tein an dam ko.	ka0 chung0khaar2 qan3 zaa2pi1tee0qin0 qan0 dam0 kow0	家族はみんな元気です。	ka chungkhar（私の家族）に副詞句 an zapi tein（彼ら全員そろって）を添え、an dam ko（みんな元気です）と述べる文です。	2021HakhaHolhBasic500_012.wav
+Zei dah na tuah lio?	zey0 daq0 na1 tuaq0 liaw0	今、何をしているのですか。	疑問詞句 zei dah（何を）＋na tuah（あなたがする）＋進行相を表す lio（〜しているところ）からなる文で、「今何をしているところですか？」と近況を尋ねる挨拶にも使われます。	2021HakhaHolhBasic500_013.wav
+A zapi tein a tlam tling dih ko.	qa0 zaa2pi1 tee0 qin0 qa0 tlaam2 tling3 diq0 kow0	すべて順調にいっています。	副詞句 a zapi tein（すべて）に、複合動詞 tlam tling（順調である・万事整う）、全量を表す dih（すっかり・全部）、肯定の ko が続いた表現です。	2021HakhaHolhBasic500_014.wav
+A ṭha pah ko.	qa0 trhaa2 paq0 kow0	まあまあ良いです。	状態動詞 ṭha（良い）に、程度を和らげる副詞小詞 pah（少し・まあまあ）と肯定の ko を添えて「まあまあ良いです」と控えめに答える表現です。	2021HakhaHolhBasic500_015.wav
+A za ko.	qa1 zaa3 kow0.	まあ十分です。（悪くありません）	動詞 za（足りる・十分である・語幹I）に肯定小詞 ko が付いた表現です。「まあ十分です（悪くありません）」という意味合いで使われます。	2021HakhaHolhBasic500_015a.wav
+Na min ho dah a si?	na1 min0 haw0 daq0 qa0 sii2	お名前は何とおっしゃいますか。	na min（あなたの名前）を主語とし、疑問詞 ho dah（誰か）＋コピュラ動詞 a si（〜である）で尋ねる文です。ハカ・チン語では名前を尋ねる際に「何（zei）」ではなく「誰（ho / aho）」を用います。	2021HakhaHolhBasic500_016.wav
+Na ka fonhpiak kho lai maw?	na0 ka0 fonq0piak0 khow0 laay0 moo2?	つづりを教えていただけますか。	主語・目的語接語 na-ka-（あなたが私に）＋動詞 fonh（つづる・合わせる）＋受益接尾辞 -piak（〜してくれる）＋可能 kho（〜できる）＋未来・推量 lai＋疑問 maw からなる丁寧な依頼表現です。	2021HakhaHolhBasic500_017.wav
+A tang lei ah rak ka ṭialpiak.	qa0 tang0ley0 qaq1 rak1 ka0 trial0piak0	下のところに書いてください。	場所句 a tang lei ah（その下の方に）に、方向接辞 rak-（こちらへ）＋1人称目的語 ka-＋動詞 ṭial（書く）＋受益 -piak（〜してくれる）を続けた依頼文です。	2021HakhaHolhBasic500_018.wav
+Zei dah na lawh?	zey0 daq0 na1 loq1	お元気ですか。／調子はどうですか。	ID 8 と同じ構文です。zei dah（何を）＋na lawh（あなたは〜のようである）で、「調子はどうですか／お元気ですか」と様子を尋ねる表現です。	2021HakhaHolhBasic500_018a.wav
+Ka min cu Steven Van Bik a si.	ka1 min0 cuu1 Steven Vaan0Biik0 qa0 sii0.	私の名前はスティーブン・ヴァン・ビクです。	主語 ka min（私の名前）に主題標識 cu（〜は）を付け、固有名詞＋コピュラ a si（〜です）で結ぶ基本的な名詞述語文（「A cu B a si」）です。	2021HakhaHolhBasic500_019.wav
+Ka min cu Yamada Taro a si.	ka1 min0 cuu1 Yamada Taro qa0 sii0.	私の名前は山田太郎です。	ID 19 と同じ構文で、名前の部分に「山田太郎（Yamada Taro）」を入れた自己紹介文です。	2021HakhaHolhBasic500_019a.wav
+Van Bik hi ka phunmin a si.	Vaan0Biik0 hii1 ka0 phun2min3 qa0 sii0.	ヴァン・ビクが私の姓（クラン名）です。	提示したい要素に近称の主題標識 hi（この〜は／〜こそが）を付け、ka phunmin（私の氏族名・名字；phun「氏族・種類」＋min「名」）＋a si（〜です）と説明する構文です。	2021HakhaHolhBasic500_020.wav
+"Yamada" hi ka phunmin a si.	"Yamada" hii1 ka0 phun2min3 qa0 sii0.	山田が私の名字です。	ID 20 と同じ構文で、「山田（Yamada）が私の名字です」と説明する表現です。	2021HakhaHolhBasic500_020b.wav
+Mah hi ka "card" a si.	maq0hii1 ka0 "card" qa0 sii0.	これが私の名刺です。	近称指示代名詞 mah hi（これ）を主語とし、ka "card"（私の名刺・カード）＋a si（〜です）と提示する文です。	2021HakhaHolhBasic500_021.wav
+Zeitin dah kan auh lai?	zey3tin0 daq0 kan0 qawq1 laay3	あなたを何とお呼びすればよいでしょうか。	疑問詞 zeitin dah（どのように）＋kan（1人称単数主語から2人称単数目的語への移行接語「私があなたを」）＋動詞 au「呼ぶ」の語幹II auh＋未来・推量 lai からなる文です。「何とお呼びしましょうか（どのように呼びましょうか）」という意味になります。	2021HakhaHolhBasic500_022.wav
+Zangfahnak tein, "Masao" tiah ka au.	zaang3faq0naak0tee0qin0 "Masao" tiaq1 ka0 qaaw2	どうか（私のことを）マサオと呼んでください。	丁寧な前置き zangfahnak tein（どうか・お願いですから）に、引用標識 tiah（〜と）と ka au（私を呼んでください；1人称目的語 ka-＋動詞 au 語幹I）を続けた依頼表現です。	2021HakhaHolhBasic500_023.wav
+Zangfahnak tein, "Taro" tiah ka au.	zaang3faq0naak0tee0qin0 "Taro" tiaq1 ka0 qaaw2	どうか（私のことを）タロウと呼んでください。	ID 23 と同じ構文で、呼び名を「タロウ（Taro）」に変えた依頼表現です。	2021HakhaHolhBasic500_023a.wav
+Bia hal awk na ngei maw?	bia0 hal0 qook0 na0 ngay2 moo3	何か質問はありますか。	bia hal awk（尋ねるべき言葉＝質問；-awk は「〜すべきもの」を表す名詞化接尾辞）を目的語とし、na ngei maw?（あなたは持っていますか？）と尋ねる文です。	2021HakhaHolhBasic500_024.wav
+Bia kan hal kho lai maw?	bia0 kan2 hal3 khow0 laay0 moo2	質問してもいいですか。	目的語 bia（言葉・話）に、移行接語 kan-（私があなたに）＋動詞 hal（尋ねる）＋可能 kho＋推量 lai＋疑問 maw を続けた「あなたに質問してもよろしいですか？」という丁寧な許可伺いです。	2021HakhaHolhBasic500_025.wav
+Keimah pumpak in bia kan hal kho lai maw?	key0maq1 pum3paak0 qin0 bia0 kan2 hal3 khow0 laay0 moo2?	個人的な質問をしてもいいですか。	ID 25 の文頭に副詞句 keimah pumpak in（私個人として・個人的に；keimah「私自身」＋pumpak「個人」＋具格 in）を添えた表現です。	2021HakhaHolhBasic500_026.wav
+A dang hal awk na ngei maw?	qa0 dang0 hal0 qook0 na0 ngay2 moo3?	ほかに質問はありますか。	a dang（他の）＋hal awk（質問・尋ねるべきこと）を目的語とし、na ngei maw?（持っていますか＝ありますか？）と尋ねる文です。	2021HakhaHolhBasic500_027.wav
+A dang hal awk pakhat ka ngei.	qa0 dang0 hal0 qook0 pa1khat1 ka0 ngay2	ほかに質問がもう1つあります。	a dang hal awk（他の質問）に数詞 pakhat（1つ）を後置し、ka ngei（私は持っています）と述べる文です。ハカ・チン語では数詞は名詞の後ろに置かれます。	2021HakhaHolhBasic500_028.wav
+Na ka hal mi kong a sullam ka thei lo.	na1 ka0 hal0 mii0 kong0 qa1 sul3lam0 ka0 they2 low3	あなたの質問の意味がわかりません。	関係節 na ka hal mi kong（あなたが私に尋ねたことについて；mi は関係節標識）の a sullam（その意味）を、ka thei lo（私は理解できない・知らない；lo は否定）と述べる文です。	2021HakhaHolhBasic500_029.wav
+Can toi tein bia chimh kan duh ko.	caan3 tooy0 teen0 be1 chimq3 kan2 duq1 kow3	少しお話ししたいことがあるのですが。	can toi tein（短い時間で＝少しの間）＋動名詞補文 bia chimh（話をすること；動詞 chim の語幹II）＋kan duh ko（私はあなたに〜したい；kan- は「私があなたに」）からなる申し出の表現です。	2021HakhaHolhBasic500_030.wav
+A, zei dah a si?	qaa2, zey0 daq0 qa0 sii2	はい、何でしょうか。	間投詞 A（ああ、はい）に、zei dah a si?（それは何ですか？）を続けた応答表現です。	2021HakhaHolhBasic500_031.wav
+Bia kan ruah kho lai maw?	bia0 kan2 ruaq1 khow3 laay0 moo2	お話し（ご相談）してもいいですか。	連語 bia ruah（相談する・話し合う）に移行接語 kan-（私があなたと）＋可能 kho＋推量 lai＋疑問 maw を組み合わせた「お話し（ご相談）してもよろしいですか？」という表現です。	2021HakhaHolhBasic500_032.wav
+Zei dah a cang?	zey0daq0 qa1 cang3	どうしたのですか。（何があったのですか）	疑問詞句 zei dah（何が）に自動詞 a cang（起こる・生じる・語幹I）を続けた「何が起こったのですか？（どうしたのですか？）」という定番の疑問文です。	2021HakhaHolhBasic500_033.wav
+Zei dah na chim mi a si?	zey0daq0 na0 chim0 mii0 qa0 sii2	何とおっしゃったのですか。	関係節 na chim mi（あなたが言ったこと）を主語とし、zei dah ... a si?（〜は何ですか？）で挟んだ疑問構文です。	2021HakhaHolhBasic500_034.wav
+Zangfahnak in chim ṭhan tuah.	zaang3faq0naak0qin0 chim1 trhaan0 tuaq1	どうかもう一度言ってください。	zangfahnak in（どうか）＋動詞 chim（言う）＋反復副詞 ṭhan（再び・もう一度）＋丁寧な命令・促しの小詞 tuah（〜してください）からなる依頼文です。	2021HakhaHolhBasic500_035.wav
+Zangfahnak in duhsah tein chim.	zaang3faq0naak0qin0 duq0saq1 te0qin0 chim0	どうかゆっくり話してください。	zangfahnak in（どうか）に様態副詞句 duhsah tein（ゆっくりと）を続け、動詞 chim（話す・言う）を修飾した依頼文です。	2021HakhaHolhBasic500_036.wav
+Ka chim mi na lung a fiang maw?	ka0 chim0 mii0 na1 lung3 a1 fiang3 moo2	私が言っていることがわかりますか。	関係節 ka chim mi（私が言っていること）に対し、身体部位を用いた成句 na lung a fiang maw?（あなたの心は澄んでいますか＝理解できますか？）を続けた表現です。lung fiang で「納得する・理解する」を表します。	2021HakhaHolhBasic500_037.wav
+Ka chim mi na fiang maw?	ka0 chim0 mii0 na1 fiang3 moo2	私が言っていることがわかりますか。	ID 37 から lung（心）を省き、2人称主格 na- を直接動詞 fiang（はっきり分かる）に付けた簡略な日常表現です。	2021HakhaHolhBasic500_037a.wav
+Ka fiang ko.	ka1 fiang3 kow0	わかります。	1人称単数主格 ka-＋動詞 fiang（理解している・明らかである）＋肯定小詞 ko からなる「（よく）わかります」という返答です。	2021HakhaHolhBasic500_038.wav
+Ka lung a fiang lo.	ka1 lung0 qa1 fiang3 low2	わかりません。	ka lung（私の心）＋a fiang lo（明らかではない・すっきりしない）で、「理解できません（わかりません）」を表す表現です。	2021HakhaHolhBasic500_039.wav
+Aw, ka fiang ko. Asinan a tlawm tuk.	qoo3, ka1 fiang3 kow0. qa1 si0naan0, qa0 tloom0 tuk1.	はい、わかります。でもほんの少しだけです。	Aw, ka fiang ko（はい、わかります）に、逆接接続詞 Asinan（しかしながら）＋a tlawm tuk（とても少ないです；tlawm「少ない」＋程度副詞 tuk「〜すぎる・とても」）を続けた文です。	2021HakhaHolhBasic500_040.wav
+Zei dah na chim duh mi cu a si?	zey0daq0 na0 chim0 duq1 mii0 cuu1 qa0 sii2	何を言おうとしているのですか。	関係節 na chim duh mi cu（あなたが言いたいことは；duh「〜したい」）を主題とし、zei dah ... a si?（何ですか？）と尋ねる文です。	2021HakhaHolhBasic500_041.wav
+Zei dah a sullam a si?	zey0daq0 qa1 sul3lam0 qa0 sii2	どういう意味ですか。	a sullam（その意味）を主語とし、zei dah ... a si?（何ですか？）と尋ねる「どういう意味ですか？」の定型表現です。	2021HakhaHolhBasic500_042.wav
+Ka lung a fiang ko.	ka1 lung0 qa1 fiang3 kow0	わかりました。	ka lung（私の心）＋a fiang ko（すっかり明らかになりました）で、「よくわかりました（納得しました）」を表す表現です。	2021HakhaHolhBasic500_043.wav
+Zei dah kan i ruah ah a ṭhat lai?	zey0daq0 kan3 qi0ruaq0 qaq0 qa1 trhat0 laay0	何について話しましょうか。	条件節 zei dah kan i ruah ah（私たちが何について話し合えば；ah は条件「〜なら」）に、主節 a ṭhat lai?（良いでしょうか；助動詞 lai の前で ṭha が語幹II ṭhat に交替）を続けた相談の表現です。	2021HakhaHolhBasic500_044.wav
+Kan ruah mi "subject" kan thlen ah a ṭha hnga maw?	kan0 ruaq0 mii0 "sub1ject1" kan0 thlen0 qaq1 qa0 trhaa0 hngaa1 moo3	話題を変えてもよろしいですか。	kan ruah mi "subject"（私たちが話している話題）を kan thlen ah（変えるなら；thleng「変える」の語幹II thlen＋条件 ah）、a ṭha hnga maw?（良いでしょうか？；hnga は仮定・推量の助動詞）と控えめに尋ねる文です。	2021HakhaHolhBasic500_045.wav
+Kan "subject" ah kal ṭhan u sih.	kan0 "sub1ject1" qaq1 kal0 thraan0 qu1 si1	話をもとの話題に戻しましょう。	方向句 kan "subject" ah（私たちの話題へ）に、動詞 kal（行く）＋ṭhan（再び）＋1人称複数の勧誘標識 u sih（〜しましょう）を続けた表現です。	2021HakhaHolhBasic500_046.wav
+Khua zei in dah na rat?	kho1zey0 qin0 daq0 na0 rat1	どこから来たのですか。	疑問詞 khua zei（どこ）＋起点格助詞 in（〜から）＋WH疑問標識 dah に、na rat（あなたが来た）を続けた文です。WH疑問文では動詞 ra（来る）が語幹IIの rat に交替します。	2021HakhaHolhBasic500_047.wav
+"Myanmar" in ka ra.	"Myanmar" qin0 ka0 raa3	ミャンマーから来ました。	起点句 "Myanmar" in（ミャンマーから）に ka ra（私は来ました；平叙文のため語幹Iの ra）を続けた返答です。	2021HakhaHolhBasic500_048.wav
+"Myanmar" khua zei in dah na rat?	"Myanmar" kho1zey0 qin0 daq0 na0 rat1	ミャンマーのどこから来たのですか。	ID 47 の頭に国名 "Myanmar" を置いて範囲を限定し、「ミャンマーのどこから来たのですか？」と尋ねるWH疑問文です（動詞は語幹II rat）。	2021HakhaHolhBasic500_049.wav
+Hakha, "Chin State" in ka ra.	haa0khaa0, "Chin0 State1" qin0 ka0 raa3	チン州のハーカから来ました。	地名に起点格 in（〜から）を付け、ka ra（私は来ました）と答える平叙文です。	2021HakhaHolhBasic500_050.wav
+Hakha cu zei dah a lawh?	haa0khaa0 cuu1 zey0daq0 qa0 loq1	ハーカはどんなところですか。	主題 Hakha cu（ハーカは）に対し、zei dah a lawh?（何のようですか＝どんなところですか？）と尋ねる文です。	2021HakhaHolhBasic500_051.wav
+Zei holh dah nan ram ah nan chim?	zey0 holq0 daq0 nan3 ram0 qaq1 nan3 chim2	あなたの国では何語を話しますか。	疑問詞句 zei holh dah（何語を）＋場所句 nan ram ah（あなたたちの国で）＋nan chim（あなたたちは話しますか；nan- は2人称複数「あなたたち」）からなる疑問文です。	2021HakhaHolhBasic500_052.wav
+Nan ram kong rak ka chim tuah.	nan3 ram0 kong0 rak1 ka0 chim0 tuaq3	あなたの国のことを教えてください。	目的語 nan ram kong（あなたたちの国のことについて）に、rak-（こちらへ）＋ka-（私に）＋chim（話す）＋命令小詞 tuah（〜してください）を続けた依頼文です。	2021HakhaHolhBasic500_053.wav
+Japan ram cu naa nuam maw?	Ja0paan0ram0 cuu1 naa0 nuam2 moo3	日本（での滞在）は楽しいですか。	主題 Japan ram cu（日本という国は）に、naa nuam maw?（あなたは楽しく過ごしていますか？）を続けた文です。naa は2人称単数主格 na- と再帰接頭辞 i-（または a-）が融合した形です。	2021HakhaHolhBasic500_054.wav
+Nan ram minung zei zat dah a si?	nan3 ram0 mi1nung0 zey0zat0 daq0 qa0 sii2	あなたの国の人口はどれくらいですか。	主語 nan ram minung（あなたたちの国の人々・人口）に対し、数量疑問詞 zei zat dah（どれくらい・何人）＋コピュラ a si（〜ですか）で尋ねる文です。	2021HakhaHolhBasic500_055.wav
+Japan minung cu million za leh kul an si.	Ja0paan0 mi1nung0 cuu1 million zaa0 leq0 kul0 qan0 sii2	日本の人口は1億2000万人です。	主題 Japan minung cu（日本の人口は）に、数詞句 million za leh kul（100万×120＝1億2000万；za「百」＋leh「と」＋kul「二十」）と複数コピュラ an si（〜です）を続けた文です。	2021HakhaHolhBasic500_056.wav
+Japan ram i na uar bik mi rak ka chim.	Ja0paan0ram0 qii1 na1 quar0 biik0 mii0 rak1 ka0 chim2	日本で一番気に入ったことを教えてください。	関係節 Japan ram i na uar bik mi（日本においてあなたが最も気に入ったこと；i は処格・属格助詞、uar「好む・気に入る」、bik「最も」）を目的語とし、rak ka chim（私に話してください）と促す文です。	2021HakhaHolhBasic500_057.wav
+Nan ram ah a sang bik tlang min na thei maw?	nan3 ram0 qaq1 qa1 saang0 biik0 tlaang0 min0 na0 they0 moo3	あなたの国で一番高い山の名前を知っていますか。	nan ram ah（あなたの国で）＋a sang bik tlang min（一番高い山の名前；sang「高い」＋最上級 bik）を、na thei maw?（あなたは知っていますか？）と尋ねる文です。	2021HakhaHolhBasic500_058.wav
+Fuji tlang cu Japan ram ah a sang bik a si.	Fuu0jii0 tlaang0 cuu1 Ja0paan0ram0 qaq1 qa1 saang3 biik0 qa0 sii0	富士山は日本で一番高い山です。	主題 Fuji tlang cu（富士山は）＋場所句 Japan ram ah（日本で）＋a sang bik a si（最も高いものです）からなる最上級構文です。	2021HakhaHolhBasic500_059.wav
+Nan ram ah inn zei thilri in dah an sak?	nan3 ram0 qaq1 qin3 zey0 thil0ri0qin3 daq0 nan0 sak1	あなたの国では家をどんな材料で建てますか。	nan ram ah（あなたの国では）＋目的語 inn（家を）＋手段・材料を表す疑問句 zei thilri in dah（何の材料によって；in は具格助詞）＋an sak（人々［彼ら］は建てますか）からなる疑問文です。	2021HakhaHolhBasic500_060.wav
+Japan inn tam deuh cu thing in an sak hna.	Ja0paan0 qin0 tam0 dewq1 cuu1 thing0 qin0 qan2 sak0 hnaa3	日本の家はたいてい木で建てられています。	主題 Japan inn tam deuh cu（日本の家の大部分は；tam deuh「より多く＝たいてい」）＋材料句 thing in（木で）＋an sak hna（人々がそれらを建てます；hna は複数目的語標識）からなる文です。ハカ・チン語では非特定の3人称複数主語（an-）を用いて受動態のような意味を表します。	2021HakhaHolhBasic500_061.wav
+Nan ram ah tilum bual a um maw?	nan3 ram0 qaq1 ti1lum0bual2 qa1 qum3 moo2	あなたの国に温泉はありますか。	場所句 nan ram ah（あなたの国に）＋主語 tilum bual（温泉；ti「水」＋lum「温かい」＋bual「池・浴場」）＋存在動詞 a um maw?（ありますか？）からなる存在疑問文です。	2021HakhaHolhBasic500_062.wav
+Japan ram cu tilum bual minthang an tam ngai.	Ja0paan0ram0 cuu1 ti1lum0bual2 min3thang0 qan0 tam0 ngaay0	日本には有名な温泉がとてもたくさんあります。	主題 Japan ram cu（日本は）に対し、tilum bual minthang（有名な温泉；minthang「名高い」）＋an tam ngai（［それらが］とても多いです；ngai「とても」）が続く二重主語的な構文です。	2021HakhaHolhBasic500_063.wav
+Hakone cu Japan ram chung ah minthang bik a si.	Haa0koo0nee0 cuu1 Ja0paan0ram0 chung0 qaq1 min3thang0 biik0 qa0 sii0	箱根は日本で一番有名な（温泉）地です。	主題 Hakone cu（箱根は）＋範囲を表す Japan ram chung ah（日本の中で）＋minthang bik a si（最も有名なものです）からなる文です。	2021HakhaHolhBasic500_064.wav
+Hakone cu Japan ram chung ah minthang pakhat a si.	Haa0koo0nee0 cuu1 Ja0paan0ram0 chung0 qaq1 min3thang0 pa1khat1 qa0 sii0	箱根は日本にある有名な（温泉）地の一つです。	ID 64 の bik（最も）を数詞 pakhat（1つ）に変え、「有名なものの1つです」と表現した文です。	2021HakhaHolhBasic500_064a.wav
+Nan ram ah zoh awk a tam maw?	nan3 ram0 qaq1 zowq3 qook0 qa0 tam0 moo2	あなたの国には見どころが多いですか。	zoh awk（見るべきもの＝見どころ；動詞 zoh「見る」＋接尾辞 -awk）が a tam maw?（多いですか？）と尋ねる文です。	2021HakhaHolhBasic500_065.wav
+Japan ram cu zoh awk a tam ngai.	Ja0paan0ram0 cuu1 zowq3 qook0 qa0 tam0 ngaay0	日本には見どころがとてもたくさんあります。	ID 65 に対する返答的な構造で、Japan ram cu（日本は）＋zoh awk（見どころが）＋a tam ngai（とても多いです）と述べる文です。	2021HakhaHolhBasic500_066.wav
+Nan ram ah hmun dawh zoh awk an um maw?	nan3 ram0 qaq1 hmun3 doq1 zowq3 qook0 qan0 qum0 moo2	あなたの国には見るべき美しい場所（観光地）がありますか。	hmun dawh zoh awk（見るべき美しい場所＝観光地；hmun「場所」＋dawh「美しい」）を主語とし、複数主格の存在動詞 an um maw?（ありますか？）で尋ねる文です。	2021HakhaHolhBasic500_067.wav
+Japan ram cu hmun dawh zoh awk a tam ngai.	Ja0paan0ram0 cuu1 hmun3doq1 zowq3 qook0 qa0 tam0 ngaay0	日本には見るべき美しい場所がとてもたくさんあります。	主題 Japan ram cu（日本は）＋hmun dawh zoh awk（見るべき美しい場所が）＋a tam ngai（とても多いです）と述べる文です。	2021HakhaHolhBasic500_068.wav
+Nan ram ah li a hnin bal maw?	nan3 ram0 qaq1 lii0 qaa0 hnin2bal3 moo2	あなたの国では地震が起きたことがありますか。	成句 li hnin（地震が起きる；li「大地・地震」＋hnin「揺れる」）に、経験相を表す助動詞小詞 bal（〜したことがある）と疑問 maw を続けた文です。	2021HakhaHolhBasic500_069.wav
+Kannih Japan ram cu li a hnin lengmang.	kan0niq1 Ja0paan0 ram0 cuu1 lii0 qaa0 hnin2 leng1mang3	私たちの日本という国ではしょっちゅう地震が起きます。	1人称複数独立代名詞 kannih（私たち）を添えた主題句 Kannih Japan ram cu（私たちの日本では）に、li a hnin（地震が揺れる）＋頻度副詞 lengmang（しょっちゅう・頻繁に）を続けた文です。	2021HakhaHolhBasic500_070.wav
+Japan ram ah cun April thla hi can ṭha bik a si.	Ja0paan0ram0 qaq1 cun3 April thlaa0 hi1 caan0 trhaa0 biik0 qa0 sii0	日本では4月が一番いい時期（季節）です。	場所主題 Japan ram ah cun（日本においては）＋April thla hi（4月という月は）＋can ṭha bik a si（最も良い時期・季節です）からなる文です。	2021HakhaHolhBasic500_071.wav
+Japan ah cun fur can cu June a si.	Ja0paan0 qaq1 cun3 fuur0 caan0 cuu0 June0 qa0 sii0	日本では雨季（梅雨）は6月です。	Japan ah cun（日本では）＋主題 fur can cu（雨季の時期は；fur「雨季」）＋June a si（6月です）と述べる名詞述語文です。	2021HakhaHolhBasic500_072.wav
+Japan thal can cu a lum taktak ko.	Ja0paan0 thaal0 caan0 cui1 qa1 lum0 tak1tak1 kow3	日本の夏は本当に暑いです。	主題 Japan thal can cu（日本の乾季・夏は；thal「乾季・暑季」）＋a lum（暑い・暖かい）＋強調の畳語副詞 taktak（本当に）＋肯定小詞 ko からなる文です。	2021HakhaHolhBasic500_073.wav
+Autumn thla ah thing hnah cu a sen ah a thleng.	Autumn thlaa0 qaq1 thing0 hnaq0 cuu1 qa0 sen0 qaq0 qaa0 thleng0	秋の月には木の葉が赤く変わります。	Autumn thla ah（秋の月に）＋主題 thing hnah cu（木の葉は）＋変化の結果を表す a sen ah（赤色へと）＋動詞 a thleng（変わる・語幹I）からなる文です。	2021HakhaHolhBasic500_074.wav
+Thing hnah cu Autumn ah an til.	thing0 hnaq1 cuu1 Autumn qaq1 qan0 til2	木の葉は秋に散ります（落ちます）。	主題 thing hnah cu（木の葉は）＋Autumn ah（秋に）＋an til（［それらが］散る・落ちる；葉が複数あるため主格は3人称複数 an-）からなる文です。	2021HakhaHolhBasic500_075.wav
+Kum khat ah phunpi dinh ni zei zat dah nan ngeih?	kum0 khat0 qaq1 phun0pi0dinq1nii3 zey0zat0 daq0 nan0 ngayq1	1年に祝祭日は何日ありますか。	kum khat ah（1年に）＋目的語 phunpi dinh ni（国民の休日・祝祭日；dinh は動詞 din「休む」の語幹IIで名詞 ni を修飾）＋疑問詞 zei zat dah（いくつ）＋nan ngeih（あなたたちは持っていますか；WH疑問文のため動詞 ngei が語幹II ngeih に交替）からなる文です。	2021HakhaHolhBasic500_076.wav
+Nan ram ah thla zei zat dah a um?	nan3 ram0 qaq1 thla0 zey0zat0 daq0 qa1 qum3	あなたの国には月（暦の月）がいくつありますか。	nan ram ah（あなたの国には）＋thla zei zat dah（月がいくつ）＋a um?（ありますか？）と尋ねる存在疑問文です。	2021HakhaHolhBasic500_077a.wav
+Nan ram ah khuacaan zei zat dah a um?	nan3 ram0 qaq1 khuaa0caan0 zey0 zat0 daq0 qa1 qum3	あなたの国には季節がいくつありますか。	ID 77a の thla（月）を複合名詞 khuacaan（季節・気候；khua「気象・環境」＋caan「時期」）に置き換えた疑問文です。	2021HakhaHolhBasic500_077b.wav
+Kan ram ah khuacaan pathum kan ngei.	kan3 ram0 qaq1 khua0caan0 pa1thum3 kan0 ngey2	私たちの国には季節が3つあります。	kan ram ah（私たちの国では）＋目的語 khuacaan pathum（3つの季節；ミャンマーの暑季・雨季・乾季の3季を指す）＋kan ngei（私たちは持っています；平叙文のため語幹I ngei）からなる文です。	2021HakhaHolhBasic500_078.wav
+Zeitik ah dah Japan na rat?	zey0tik0 qaq1 daq0 Ja0paan0 na0 rat1	いつ日本へ来たのですか。	疑問副詞句 zeitik ah dah（いつ）＋目的地 Japan＋na rat（あなたが来たか；WH疑問文のため ra「来る」が語幹II rat に交替）からなる疑問文です。	2021HakhaHolhBasic500_079.wav
+Zeitik ah dah nan ram ah na kir lai?	zey0tik0 qaq1 daq0 nan3 ram0 qaq1 na0 kiir0 laay3	いつ国へ帰るのですか。	zeitik ah dah（いつ）＋方向句 nan ram ah（あなたの国へ）＋na kir lai?（あなたは帰る予定ですか？；kir「帰る・戻る」＋未来 lai）からなる疑問文です。	2021HakhaHolhBasic500_080.wav
+Khua zei ah dah na um?	khua0 zey0 qaq0 daq0 na0 qum2	どこに住んでいるのですか。	場所疑問句 khua zei ah dah（どこに）＋動詞 na um?（あなたは住んでいますか／いますか？）からなる基本的な所在・居住地の質問文です。	2021HakhaHolhBasic500_081.wav
+Tokyo ah ka um.	Tokyo qaq1 ka1 qum3	東京に住んでいます。	場所句 Tokyo ah（東京に）＋ka um（私は住んでいます／います）と答える文です。	2021HakhaHolhBasic500_082.wav
+Hakha ah ka um.	haa0khaa0 qaq0 ka1 qum3	ハーカに住んでいます。	ID 82 の地名を Hakha（ハーカ）に変えた文です。	2021HakhaHolhBasic500_082b.wav
+Hika hin zei can dah a hlat?	hi0kaa0hin2 zey3can0daq0 qa0 hlaat0	ここからどのくらい離れていますか。	起点句 hika hin（ここから；hika「ここ」＋近称起点助詞 hin「〜から」）＋疑問詞句 zei can dah（どのくらい）＋状態動詞 a hlat（遠いですか・離れていますか）からなる文です。	2021HakhaHolhBasic500_083.wav
+Hika hin kilometer pathum a hlat.	hi0kaa0hin2 kilometer pa0thum0 qa0 hlaat0	ここから3キロメートル離れています。	hika hin（ここから）＋距離を表す kilometer pathum（3キロメートル）＋a hlat（離れています）と答える文です。	2021HakhaHolhBasic500_084.wav
+Motorcar in minute pahra kal a si.	motorcar qin3 minute pa1hraa0 kal0 qa0 sii0	車で10分の道のりです。	手段を表す motorcar in（自動車で；具格 in）＋minute pahra kal（10分行くこと；pahra「10」）＋コピュラ a si（〜です）で所要時間を表す構文です。	2021HakhaHolhBasic500_085.wav
+Ka inn cu biakinn pawng ah a si.	ka1 qin3 cuu1 biak0qin0 poong0 qaq1 qa0 sii0	私の家は教会の近くです。	主題 ka inn cu（私の家は）＋位置句 biakinn pawng ah（教会の近くに；biakinn「礼拝堂・教会」、pawng「そば・近く」）＋a si（あります／です）からなる文です。	2021HakhaHolhBasic500_086.wav
+Zei bantuk rian dah na ṭuan?	zey0 ban0tuk0 rian0 daq0 na0 truan2	どんなお仕事をしていますか。	疑問名詞句 zei bantuk rian dah（どのような仕事を；zei bantuk「どんな」）＋na ṭuan?（あなたは働いていますか？；rian ṭuan で「仕事をする・働く」）からなる職業を尋ねる文です。	2021HakhaHolhBasic500_087.wav
+ABC company ah ka ṭuan.	ABC company qaq1 ka0 truan0	ABC社で働いています。	勤務先を表す場所句 ABC company ah（ABC会社で）＋ka ṭuan（私は働いています）と答える文です。	2021HakhaHolhBasic500_088a.wav
+Osaka University ah ka ṭuan.	Osaka University3 qaq0 ka0 truan0	大阪大学で働いています。	ID 88a の勤務先を Osaka University（大阪大学）に変えた文です。	2021HakhaHolhBasic500_088b.wav
+Kei cu innṭeknu ka si.	key0 cuu1 qin3treek0nuu0 ka0 sii0	私は主婦です。	主題 kei cu（私は）＋補語 innṭeknu（主婦・女主人；inn「家」＋ṭek「主」＋nu「女性」）＋1人称単数コピュラ ka si（私は〜です；主語が kei のためコピュラにも ka- が付く）からなる文です。	2021HakhaHolhBasic500_089.wav
+Na chungkhar zei dah an tuah?	na1 chung3khaar2 zey0 daq0 qan0 tuaq1	ご家族は何（の仕事）をしていますか。	主語 na chungkhar（あなたのご家族）＋疑問詞 zei dah（何を）＋an tuah?（彼らはしていますか？）からなる疑問文です。	2021HakhaHolhBasic500_090.wav
+Na rian ṭuan zei can ah dah nan thawk?	na0 rian0 truan3 zey0 caan2 qaq1 daq0 nan0 thok1	あなたの仕事は何時から始まるのですか。	na rian ṭuan（あなたの仕事）＋疑問時間句 zei can ah dah（何時に）＋nan thawk?（あなたたち［職場］は始めますか？）からなる疑問文です。	2021HakhaHolhBasic500_091.wav
+Kan zung rian ṭuan can cu, pakua in zanlei panga.	kan0 zung2 rian1 truan1 caan1 cuu1, pa0kua0 qin0 zaan3ley0 pa0ngaa3	私たちの職場の勤務時間は、9時から午後5時（まで）です。	主題句 kan zung rian ṭuan can cu（私たちのオフィスの勤務時間は；zung「事務所・役所」）に対し、pakua in zanlei panga（9時から午後5時［まで］；pakua「9」、panga「5」）を続けたコピュラ省略文です。	2021HakhaHolhBasic500_092.wav
+Zeitin dah rian na kal?	zey0tin0 daq0 rian2 na0 kal2?	どうやって仕事に行きますか（通勤していますか）。	手段を問う疑問詞 zeitin dah（どのように・どうやって）＋rian na kal?（あなたは仕事に行きますか？）からなる通勤方法を尋ねる文です。	2021HakhaHolhBasic500_093.wav
+Rian ṭuannak ah motor ka mawngh i ka kal.	rian0 truan0naak0 qaq1 motor ka0 mongq0 qii0 ka0 kal0.	車を運転して職場へ行きます。	目的地 rian ṭuannak ah（仕事場・職場へ；-nak は場所名詞化接尾辞）＋motor ka mawngh i（私が車を運転して；接続詞 i「〜して」の前で動詞 mawng が語幹II mawngh に交替）＋ka kal（行きます）からなる文です。	2021HakhaHolhBasic500_094.wav
+Nan chungkhar zei zat dah nan si?	nan3 chung0khaar2 zey0zat0 daq0 nan0 sii2	ご家族は何人ですか。	nan chungkhar（あなたたちのご家族は）＋zei zat dah（何人）＋nan si?（あなたたちは〜ですか？）と家族の人数を尋ねる文です。	2021HakhaHolhBasic500_095.wav
+Kan chungkhar pali kan si.	kan3 chung0khaar2 pa0lii0 kan0 sii0	うちは4人家族です。	kan chungkhar（私たちの家族は）＋数詞 pali（4人）＋1人称複数コピュラ kan si（私たちは〜です）と答える文です。	2021HakhaHolhBasic500_096.wav
+Ka nupi le ka fa pahnih an si.	ka0 nu0pii0 leq1 ka0 faa0 pa0hniq0 qan0 sii0	妻と子どもが2人です。	ka nupi（私の妻）＋接続詞 le（〜と）＋ka fa pahnih（私の子ども2人；pahnih「2」）＋3人称複数コピュラ an si（彼らです＝います）からなる家族構成の説明文です。	2021HakhaHolhBasic500_097.wav
+Hngakchia zei zat dah na ngeih?	hngaak0chia0 zey0zat0daq0 na0 ngeyq3	お子さんは何人いますか。	目的語 hngakchia（子ども）＋疑問詞 zei zat dah（何人）＋na ngeih?（あなたは持っていますか？；WH疑問文のため動詞 ngei が語幹II ngeih に交替）からなる疑問文です。	2021HakhaHolhBasic500_098.wav
+Fapa pakhat le fanu pakhat ka ngei.	fa0paa0 pa0khat0 lee0 fa0nuu0 pa0khat0 ka0 ngay2	息子が1人と娘が1人います。	fapa pakhat（息子1人；fa「子」＋pa「男性」）＋le（と）＋fanu pakhat（娘1人；nu「女性」）＋ka ngei（私は持っています；平叙文のため語幹I ngei）からなる文です。	2021HakhaHolhBasic500_099.wav
+Ka fapa cu kum hnihnak junior high school ah a kai.	ka0 fa0paa0 cuu1 kum0 hniq1naak0 junior high school qaq1 qa1 kaay3	息子は中学校の2年生に通っています。	主題 ka fapa cu（私の息子は）＋kum hnihnak junior high school ah（中学2年生に；-nak は数詞に付いて「〜番目・〜年生」を表す序数接尾辞）＋a kai（通っています；kai「登る・学校に通う」）からなる文です。	2021HakhaHolhBasic500_100.wav
+Ka fanu cu kum hnihnak high school ah a kai lio.	ka0 fa0nuu0 cuu1 kum0 hniq1naak0 high school qaq1 qa1 kaay3 liow0	娘は高校の2年生に通っています。	主題 ka fanu cu（私の娘は）＋kum hnihnak high school ah（高校2年生に）＋a kai lio（通っているところです；lio は進行・継続相）からなる文です。	2021HakhaHolhBasic500_101.wav
+`;
+
+    // ↑↑ ペーストここまで ↑↑
+  </script>
+  <!-- ========================================================== -->
+
+
+
+  <!-- ヘッダー -->
+  <header class="bg-white shadow-sm sticky top-0 z-10">
+    <div class="max-w-md mx-auto px-4 py-4">
+      <h1 class="text-xl font-bold text-center text-blue-600">Hakha Chin 学習帳</h1>
+      
+      <!-- コントロールバー -->
+      <div class="flex justify-between items-center mt-4">
+        <button id="btn-filter" onclick="toggleFilter()" class="flex items-center text-sm px-3 py-1 rounded-full border transition-colors bg-white border-gray-300 text-gray-600">
+          <i class="ph ph-star mr-1"></i> ★のみ
+        </button>
+        
+        <div class="flex space-x-2">
+          <button id="btn-show-chin" onclick="toggleShow('chin')" class="flex items-center text-xs px-2 py-1 rounded transition-colors text-blue-500 bg-blue-50">
+            <i class="ph ph-eye mr-1"></i> チン語
+          </button>
+          <button id="btn-show-phonetic" onclick="toggleShow('phonetic')" class="flex items-center text-xs px-2 py-1 rounded transition-colors bg-gray-200 text-gray-400">
+            <i class="ph ph-eye-closed mr-1"></i> 音素
+          </button>
+          <button id="btn-show-jp" onclick="toggleShow('jp')" class="flex items-center text-xs px-2 py-1 rounded transition-colors text-blue-500 bg-blue-50">
+            <i class="ph ph-eye mr-1"></i> 日本語
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- フレーズが並ぶリスト部分 -->
+  <main id="phrase-list" class="max-w-md mx-auto p-4 space-y-3">
+    <!-- ここにJavaScriptで自動的にデータが作られます -->
+  </main>
+
+  <!-- 下部固定のグローバルコントロール -->
+  <div class="fixed bottom-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
+    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+      
+      <button onclick="cycleRepeat()" id="btn-repeat" class="flex flex-col items-center p-2 rounded-lg transition-colors text-gray-400 hover:bg-gray-50">
+        <i id="icon-repeat" class="ph ph-repeat text-2xl"></i>
+        <span id="text-repeat" class="text-[10px] mt-1 font-medium">リピートオフ</span>
+      </button>
+
+      <div class="flex-grow flex justify-center px-4 overflow-hidden">
+        <div id="playing-status" class="text-center w-full">
+          <p class="text-sm text-gray-400 mt-2">リストから選択して再生</p>
+        </div>
+      </div>
+
+      <button class="flex flex-col items-center p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50" onclick="alert('音声を組み込み後に速度調整が可能です。')">
+        <i class="ph ph-gauge text-2xl"></i>
+        <span class="text-[10px] mt-1 font-medium">速度: 1.0x</span>
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ========================================================== -->
+  <!-- ⚙️ STEP 2: アプリを動かす裏側のプログラム（変更不要です） -->
+  <!-- ========================================================== -->
+  <script>
+    // --- 1. データの自動変換 ---
+    // エクセルのテキストデータを、プログラムで使える形式に変換します。
+    const phrases = EXCEL_DATA.trim().split('\n')
+      .filter(line => line.trim() !== '') // 空行を除外
+      .map((line, index) => {
+        const cols = line.split('\t'); // タブで区切る
+        return {
+          id: index + 1,
+          chin: cols[0] ? cols[0].trim() : "",
+          phonetic: cols[1] ? cols[1].trim() : "",
+          jp: cols[2] ? cols[2].trim() : "",
+          note: cols[3] ? cols[3].trim() : "",
+          audioUrl: cols[4] ? cols[4].trim() : ""
+        };
+      });
+
+    // --- 2. アプリの状態（設定）を管理 ---
+    let state = {
+      activeId: null,
+      isPlaying: false,
+      repeatMode: 0, // 0:なし, 1:全曲, 2:1曲
+      showChin: true,
+      showPhonetic: false,
+      showJp: true,
+      filterFavorites: false,
+      // お気に入りはブラウザに保存されるようにします
+      favorites: JSON.parse(localStorage.getItem('chin_favorites')) || [], 
+      expandedNotes: []
+    };
+
+    let audio = null;
+    let timerId = null;
+
+    // --- 3. 画面を描画する関数 ---
+    function render() {
+      // 1. リストの描画
+      const listContainer = document.getElementById('phrase-list');
+      let html = '';
+      
+      const displayPhrases = state.filterFavorites 
+        ? phrases.filter(p => state.favorites.includes(p.id)) 
+        : phrases;
+
+      if (displayPhrases.length === 0) {
+        html = '<p class="text-center text-gray-500 mt-10">フレーズがありません。</p>';
+      } else {
+        displayPhrases.forEach(p => {
+          const isActive = state.activeId === p.id;
+          const isPlaying = isActive && state.isPlaying;
+          const isFav = state.favorites.includes(p.id);
+          const isNoteOpen = state.expandedNotes.includes(p.id);
+
+          html += `
+            <div class="flex flex-col p-4 rounded-xl shadow-sm transition-all duration-200 ${isActive ? 'bg-blue-50 border-2 border-blue-400 transform scale-[1.02]' : 'bg-white border border-gray-100'}">
+              <div class="flex items-center">
+                
+                <!-- 再生ボタン -->
+                <button onclick="togglePlay(${p.id})" class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isPlaying ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-blue-600 hover:bg-gray-200'}">
+                  <i class="ph ${isPlaying ? 'ph-pause-circle' : 'ph-play-circle'} text-3xl"></i>
+                </button>
+
+                <!-- テキスト -->
+                <div class="ml-4 flex-grow overflow-hidden">
+                  <p class="text-lg font-semibold transition-all duration-300 ${state.showChin ? 'opacity-100' : 'hidden'}">${p.chin}</p>
+                  ${p.phonetic ? `<p class="text-sm text-teal-600 font-mono transition-all duration-300 ${state.showPhonetic ? 'opacity-100 mt-0.5' : 'hidden'}">[${p.phonetic}]</p>` : ''}
+                  <p class="text-sm text-gray-500 transition-all duration-300 ${state.showJp ? 'opacity-100 mt-1' : 'hidden'}">${p.jp}</p>
+                  
+                  <!-- プログレスバー -->
+                  ${isPlaying ? `
+                    <div class="h-1 bg-blue-200 mt-2 rounded overflow-hidden">
+                      <div class="h-full bg-blue-600 animate-progress"></div>
+                    </div>
+                  ` : ''}
+                </div>
+
+                <!-- アクションボタン -->
+                <div class="flex flex-col space-y-1 ml-2">
+                  <button onclick="toggleFavorite(${p.id})" class="p-2 transition-colors rounded-full ${isFav ? 'text-yellow-500 bg-yellow-50' : 'text-gray-400 hover:bg-gray-50'}">
+                    <i class="ph ${isFav ? 'ph-star text-yellow-500 fill-current' : 'ph-star'} text-xl"></i>
+                  </button>
+                  ${p.note ? `
+                    <button onclick="toggleNote(${p.id})" class="p-2 transition-colors rounded-full ${isNoteOpen ? 'text-blue-500 bg-blue-50' : 'text-gray-400 hover:text-blue-500 hover:bg-gray-50'}">
+                      <i class="ph ph-article text-xl"></i>
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+
+              <!-- メモ・解説エリア -->
+              ${p.note && isNoteOpen ? `
+                <div class="mt-3 pt-3 border-t border-blue-200/50 text-sm text-gray-700 bg-blue-50/50 p-3 rounded-lg flex items-start">
+                  <i class="ph ph-article mr-2 text-blue-400 mt-0.5"></i>
+                  <div>${p.note}</div>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        });
+      }
+      listContainer.innerHTML = html;
+
+      // 2. ヘッダーボタンの更新
+      updateHeaderButtons();
+      // 3. フッターの更新
+      updateFooter();
+    }
+
+    function updateHeaderButtons() {
+      const btnFilter = document.getElementById('btn-filter');
+      if(state.filterFavorites) {
+        btnFilter.className = "flex items-center text-sm px-3 py-1 rounded-full border transition-colors bg-yellow-100 border-yellow-300 text-yellow-800";
+        btnFilter.innerHTML = '<i class="ph ph-star mr-1 fill-current"></i> ★のみ';
+      } else {
+        btnFilter.className = "flex items-center text-sm px-3 py-1 rounded-full border transition-colors bg-white border-gray-300 text-gray-600";
+        btnFilter.innerHTML = '<i class="ph ph-star mr-1"></i> ★のみ';
+      }
+
+      const updateBtn = (id, isShown, colorClass, iconOpen, iconClosed, text) => {
+        const btn = document.getElementById(id);
+        if(isShown) {
+          btn.className = `flex items-center text-xs px-2 py-1 rounded transition-colors ${colorClass} bg-opacity-10`;
+          btn.innerHTML = `<i class="ph ${iconOpen} mr-1"></i> ${text}`;
+        } else {
+          btn.className = "flex items-center text-xs px-2 py-1 rounded transition-colors bg-gray-200 text-gray-400";
+          btn.innerHTML = `<i class="ph ${iconClosed} mr-1"></i> ${text}`;
+        }
+      };
+
+      updateBtn('btn-show-chin', state.showChin, 'text-blue-600 bg-blue-100', 'ph-eye', 'ph-eye-closed', 'チン語');
+      updateBtn('btn-show-phonetic', state.showPhonetic, 'text-teal-600 bg-teal-100', 'ph-eye', 'ph-eye-closed', '音素');
+      updateBtn('btn-show-jp', state.showJp, 'text-blue-600 bg-blue-100', 'ph-eye', 'ph-eye-closed', '日本語');
+    }
+
+    function updateFooter() {
+      const btnRepeat = document.getElementById('btn-repeat');
+      const iconRepeat = document.getElementById('icon-repeat');
+      const textRepeat = document.getElementById('text-repeat');
+      const statusDiv = document.getElementById('playing-status');
+
+      // リピートボタンの見た目
+      if (state.repeatMode === 0) {
+        btnRepeat.className = "flex flex-col items-center p-2 rounded-lg transition-colors text-gray-400 hover:bg-gray-50";
+        iconRepeat.className = "ph ph-repeat text-2xl";
+        textRepeat.innerText = "リピートオフ";
+      } else if (state.repeatMode === 1) {
+        btnRepeat.className = "flex flex-col items-center p-2 rounded-lg transition-colors text-blue-600 bg-blue-50";
+        iconRepeat.className = "ph ph-repeat text-2xl";
+        textRepeat.innerText = "全曲ループ";
+      } else {
+        btnRepeat.className = "flex flex-col items-center p-2 rounded-lg transition-colors text-blue-600 bg-blue-50";
+        iconRepeat.className = "ph ph-repeat-once text-2xl";
+        textRepeat.innerText = "1曲ループ";
+      }
+
+      // 再生ステータス
+      if (state.activeId) {
+        const activePhrase = phrases.find(p => p.id === state.activeId);
+        statusDiv.innerHTML = `
+          <p class="text-xs text-blue-500 font-bold mb-1">再生中...</p>
+          <p class="text-sm font-medium truncate w-full px-2">${activePhrase.chin}</p>
+        `;
+      } else {
+        statusDiv.innerHTML = '<p class="text-sm text-gray-400 mt-2">リストから選択して再生</p>';
+      }
+    }
+
+    // --- 4. ユーザー操作時のアクション ---
+
+    function togglePlay(id) {
+      if (state.activeId === id && state.isPlaying) {
+        // 停止処理
+        if (timerId) clearTimeout(timerId);
+        if (audio) { audio.pause(); audio.currentTime = 0; }
+        state.isPlaying = false;
+        state.activeId = null;
+        render();
+      } else {
+        playAudio(id);
+      }
+    }
+
+    function playAudio(id) {
+      const phrase = phrases.find(p => p.id === id);
+      if (!phrase) return;
+
+      if (timerId) clearTimeout(timerId);
+      
+      state.activeId = id;
+      state.isPlaying = true;
+      render(); // 再生開始状態で描画
+
+      // === 実際の音声を鳴らす処理 ===
+      if (audio) { audio.pause(); }
+      audio = new Audio("audio/" + phrase.audioUrl);
+      audio.onended = () => handleAudioEnd(id);
+      
+      // 再生を実行（ファイルがないなどのエラー時はコンソールに記録して次へ）
+      audio.play().catch(e => {
+        console.error("音声の再生に失敗しました:", phrase.audioUrl, e);
+        handleAudioEnd(id);
+      });
+    }
+
+    function handleAudioEnd(currentId) {
+      state.isPlaying = false;
+
+      if (state.repeatMode === 2) {
+        // 1曲ループ
+        timerId = setTimeout(() => playAudio(currentId), 500);
+      } else if (state.repeatMode === 1) {
+        // 全曲ループ
+        const displayPhrases = state.filterFavorites ? phrases.filter(p => state.favorites.includes(p.id)) : phrases;
+        const currentIndex = displayPhrases.findIndex(p => p.id === currentId);
+        if (currentIndex !== -1) {
+          const nextIndex = (currentIndex + 1) % displayPhrases.length;
+          const nextId = displayPhrases[nextIndex].id;
+          timerId = setTimeout(() => playAudio(nextId), 800); // 0.8秒のポーズ
+        }
+      } else {
+        state.activeId = null;
+        render();
+      }
+    }
+
+    function toggleFavorite(id) {
+      if (state.favorites.includes(id)) {
+        state.favorites = state.favorites.filter(favId => favId !== id);
+      } else {
+        state.favorites.push(id);
+      }
+      // ブラウザに保存する（次回開いた時も残る）
+      localStorage.setItem('chin_favorites', JSON.stringify(state.favorites));
+      render();
+    }
+
+    function toggleNote(id) {
+      if (state.expandedNotes.includes(id)) {
+        state.expandedNotes = state.expandedNotes.filter(noteId => noteId !== id);
+      } else {
+        state.expandedNotes.push(id);
+      }
+      render();
+    }
+
+    function toggleFilter() {
+      state.filterFavorites = !state.filterFavorites;
+      render();
+    }
+
+    function toggleShow(key) {
+      if(key === 'chin') state.showChin = !state.showChin;
+      if(key === 'phonetic') state.showPhonetic = !state.showPhonetic;
+      if(key === 'jp') state.showJp = !state.showJp;
+      render();
+    }
+
+    function cycleRepeat() {
+      state.repeatMode = (state.repeatMode + 1) % 3;
+      render();
+    }
+
+    // 初回起動時の描画
+    window.onload = () => {
+      render();
+    };
+  </script>
+</body>
+</html>
